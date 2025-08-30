@@ -45,10 +45,16 @@ int main(void) {
     return -1;
   }
 
-  float vertices[] = {
-      -0.5f, -0.5f, 0.0f, // bottom left
-      0.5f,  -0.5f, 0.0f, // bottom right
-      0.0f,  0.5f,  0.0f  // top center
+  float firstTraingle[] = {
+      -0.9f,  -0.5f, 0.0f, // bottom left
+      0.0f,   -0.5f, 0.0f, // bottom right
+      -0.45f, 0.5f,  0.0f  // top center
+  };
+
+  float secondTraingle[] = {
+      0.0f,  -0.5f, 0.0f, // bottom left
+      0.9f,  -0.5f, 0.0f, // bottom right
+      0.45f, 0.5f,  0.0f  // top center
   };
 
   int success;
@@ -96,23 +102,38 @@ int main(void) {
     std::cout << "ERROR: LINKING SHADERS FAILED\n" << infoLog << std::endl;
   }
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+  glDeleteShader(vertexShader);
+  glDeleteShader(fragmentShader);
 
   // VERTEX BUFFER, VERTEX ATTRIBUTE...
-  unsigned int vertexBufferObject, vertexArrayObject, elementBufferObject;
-  glGenBuffers(1, &vertexBufferObject); // create the vertex buffer object
-	glGenVertexArrays(1, &vertexArrayObject); // create the vertex array object
-	glBindVertexArray(vertexArrayObject); //bind the vertex array object
+  unsigned int vertexBufferObject[2], vertexArrayObject[2], elementBufferObject;
+
+  glGenBuffers(2, vertexBufferObject); // create the vertex buffer object
+  glGenVertexArrays(2, vertexArrayObject); // create the vertex array object
+
+  // FOR FIRST TRIANGLE
+  glBindVertexArray(vertexArrayObject[0]); // bind the vertex array object
   glBindBuffer(GL_ARRAY_BUFFER,
-               vertexBufferObject); // 'bind' the buffer to memory
+               vertexBufferObject[0]); // 'bind' the buffer to memory
   glBufferData(
-      GL_ARRAY_BUFFER, sizeof(vertices), vertices,
+      GL_ARRAY_BUFFER, sizeof(firstTraingle), firstTraingle,
       GL_STATIC_DRAW); // copy vertices data to the vertex buffer created
-	
-	// how OpenGL should interprete our vertex attribute data
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+
+  // how OpenGL should interprete our vertex attribute data
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+  glEnableVertexAttribArray(0);
+
+  // FOR SECOND TRIANGLE
+  glBindVertexArray(vertexArrayObject[1]); // bind the vertex array object
+  glBindBuffer(GL_ARRAY_BUFFER,
+               vertexBufferObject[1]); // 'bind' the buffer to memory
+  glBufferData(
+      GL_ARRAY_BUFFER, sizeof(secondTraingle), secondTraingle,
+      GL_STATIC_DRAW); // copy vertices data to the vertex buffer created
+
+  // how OpenGL should interprete our vertex attribute data
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+  glEnableVertexAttribArray(0);
 
   glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -121,17 +142,27 @@ int main(void) {
     processInput(window);
 
     // rendering
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-		glUseProgram(shaderProgram);
-		glBindVertexArray(vertexArrayObject);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glUseProgram(shaderProgram);
+
+    // first triangle
+    glBindVertexArray(vertexArrayObject[0]);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // second triangle
+    glBindVertexArray(vertexArrayObject[1]);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // function calls and events
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
 
+  glDeleteVertexArrays(2, vertexArrayObject);
+  glDeleteBuffers(2, vertexBufferObject);
+  glDeleteProgram(shaderProgram);
   glfwTerminate();
 
   return 0;
