@@ -12,24 +12,28 @@ void processInput(GLFWwindow *window);
 const char *vertexShaderSource =
     "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
+    "out vec4 vertexColor;\n"
     "void main() {\n"
-    "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);"
-    "}\0";
+    "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "vertexColor = vec4(0.5f, 0.0f, 0.0f, 1.0f);\n"
+    "}";
 
 // fragment shader code
 const char *fragmentShaderSourceOrange =
     "#version 330 core\n"
     "out vec4 FragColor;\n"
+    "in vec4 vertexColor;\n"
     "void main() {\n"
-    "FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\0";
+    // "FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "FragColor = vertexColor;\n"
+    "}";
 
 const char *fragmentShaderSourceYellow =
     "#version 330 core\n"
     "out vec4 FragColor;\n"
     "void main() {\n"
     "FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
-    "}\0";
+    "}";
 
 int main(void) {
   glfwInit();
@@ -185,10 +189,10 @@ int main(void) {
     glBindVertexArray(vertexArrayObject[0]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
-    glUseProgram(shaderProgramYellow);
-    // second triangle
-    glBindVertexArray(vertexArrayObject[1]);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // glUseProgram(shaderProgramYellow);
+    // // second triangle
+    // glBindVertexArray(vertexArrayObject[1]);
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // function calls and events
     glfwSwapBuffers(window);
