@@ -17,18 +17,19 @@ const char *vertexShaderSource =
     "}\0";
 
 // fragment shader code
-const char *fragmentShaderSourceOrange = "#version 330 core\n"
-                                   "out vec4 FragColor;\n"
-                                   "void main() {\n"
-                                   "FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-                                   "}\0";
+const char *fragmentShaderSourceOrange =
+    "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main() {\n"
+    "FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "}\0";
 
-const char *fragmentShaderSourceYellow = "#version 330 core\n"
-                                   "out vec4 FragColor;\n"
-                                   "void main() {\n"
-                                   "FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
-                                   "}\0";
-
+const char *fragmentShaderSourceYellow =
+    "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main() {\n"
+    "FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);\n"
+    "}\0";
 
 int main(void) {
   glfwInit();
@@ -56,7 +57,7 @@ int main(void) {
   float firstTraingle[] = {
       -0.9f,  -0.5f, 0.0f, // bottom left
       0.0f,   -0.5f, 0.0f, // bottom right
-      -0.45f, 0.5f,  0.0f,  // top center
+      -0.45f, 0.5f,  0.0f, // top center
   };
 
   float secondTraingle[] = {
@@ -83,9 +84,10 @@ int main(void) {
               << infoLog << std::endl;
   }
 
-	// FRAGMENT SHADER [ORANGE]
+  // FRAGMENT SHADER [ORANGE]
   unsigned int fragmentShaderOrange;
-  fragmentShaderOrange = glCreateShader(GL_FRAGMENT_SHADER); // create fragment shader
+  fragmentShaderOrange =
+      glCreateShader(GL_FRAGMENT_SHADER); // create fragment shader
   glShaderSource(fragmentShaderOrange, 1, &fragmentShaderSourceOrange,
                  nullptr); // link fragment shader code to the shader.
   glCompileShader(fragmentShaderOrange);
@@ -97,24 +99,26 @@ int main(void) {
               << infoLog << std::endl;
   }
 
-	// FRAGMENT SHADER [YELLOW]
-	unsigned int fragmentShaderYellow;
-	fragmentShaderYellow =  glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShaderYellow, 1, &fragmentShaderSourceYellow, nullptr);
-	glCompileShader(fragmentShaderYellow);
-	glGetShaderiv(fragmentShaderYellow, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(fragmentShaderYellow, 512, nullptr, infoLog);
-		std::cout << "ERROR: YELLOW FRAGMENT SHADER COMPILATION FAILED\n" << infoLog << std::endl;
-	}
+  // FRAGMENT SHADER [YELLOW]
+  unsigned int fragmentShaderYellow;
+  fragmentShaderYellow = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fragmentShaderYellow, 1, &fragmentShaderSourceYellow, nullptr);
+  glCompileShader(fragmentShaderYellow);
+  glGetShaderiv(fragmentShaderYellow, GL_COMPILE_STATUS, &success);
+  if (!success) {
+    glGetShaderInfoLog(fragmentShaderYellow, 512, nullptr, infoLog);
+    std::cout << "ERROR: YELLOW FRAGMENT SHADER COMPILATION FAILED\n"
+              << infoLog << std::endl;
+  }
 
   // Shader program
   unsigned int shaderProgramOrange, shaderProgramYellow;
   shaderProgramOrange = glCreateProgram(); // create shader program
-	shaderProgramYellow = glCreateProgram(); //shader program for our yellow triangle
-	
-	//Attaching and linking orange shaderProgram
-	glAttachShader(shaderProgramOrange, vertexShader);
+  shaderProgramYellow =
+      glCreateProgram(); // shader program for our yellow triangle
+
+  // Attaching and linking orange shaderProgram
+  glAttachShader(shaderProgramOrange, vertexShader);
   glAttachShader(shaderProgramOrange, fragmentShaderOrange);
   glLinkProgram(shaderProgramOrange);
 
@@ -124,10 +128,10 @@ int main(void) {
     std::cout << "ERROR: LINKING SHADERS FAILED\n" << infoLog << std::endl;
   }
 
-	// Attaching and linking yellow shaderProgram
-	glAttachShader(shaderProgramYellow, vertexShader);
-	glAttachShader(shaderProgramYellow, fragmentShaderYellow);
-	glLinkProgram(shaderProgramYellow);
+  // Attaching and linking yellow shaderProgram
+  glAttachShader(shaderProgramYellow, vertexShader);
+  glAttachShader(shaderProgramYellow, fragmentShaderYellow);
+  glLinkProgram(shaderProgramYellow);
 
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShaderOrange);
@@ -136,7 +140,7 @@ int main(void) {
   // VERTEX BUFFER, VERTEX ATTRIBUTE...
   unsigned int vertexBufferObject[2], vertexArrayObject[2], elementBufferObject;
 
-  glGenBuffers(2, vertexBufferObject); // create the vertex buffer object
+  glGenBuffers(2, vertexBufferObject);     // create the vertex buffer object
   glGenVertexArrays(2, vertexArrayObject); // create the vertex array object
 
   // FOR FIRST TRIANGLE
@@ -167,7 +171,7 @@ int main(void) {
 
   // uncomment this call to draw in wireframe polygons.
   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  
+
   while (!glfwWindowShouldClose(window)) {
     // Input
     processInput(window);
@@ -181,8 +185,7 @@ int main(void) {
     glBindVertexArray(vertexArrayObject[0]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
-
-		glUseProgram(shaderProgramYellow);
+    glUseProgram(shaderProgramYellow);
     // second triangle
     glBindVertexArray(vertexArrayObject[1]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
