@@ -15,4 +15,9 @@
     - [X] Create two triangles using two different VAOs and VBOs
     - [X] Create two fragment shaders to draw two triangles of different colors
 
+## Day 3  02/09/25
+- Begining SECTION 6 [SHADERS]
+    - [X] Basic GLSL syntax (Basically C... FAV PL btw)
+    - [X] 'Communication' between shaders [in/out keywords] and between shaders and main program [uniform keyword]
+    - [ ] Shader class
 
