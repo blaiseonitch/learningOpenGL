@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <ostream>
+#include <cmath>
 #include "imgui.h"
 
 const int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
@@ -23,9 +24,10 @@ const char *fragmentShaderSourceOrange =
     "#version 330 core\n"
     "out vec4 FragColor;\n"
     "in vec4 vertexColor;\n"
+    "uniform vec4 newColor;\n"
     "void main() {\n"
     // "FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "FragColor = vertexColor;\n"
+    "FragColor = newColor;\n"
     "}";
 
 const char *fragmentShaderSourceYellow =
@@ -184,8 +186,18 @@ int main(void) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(shaderProgramOrange);
     // first triangle
+    glUseProgram(shaderProgramOrange);
+    float timeValue = glfwGetTime();
+    float greenValue =
+        (sin(timeValue) / 2.0f) * 0.5f; // random values using a sin function.
+    int vertextColorLocation = glGetUniformLocation(
+        shaderProgramOrange,
+        "newColor"); // get the uniform from the shader program (which has the
+                     // shader containing the declaration of the uniform)
+    glUniform4f(vertextColorLocation, 0.0f, greenValue, 0.0f,
+                1.0f); // updating the uniform's value
+
     glBindVertexArray(vertexArrayObject[0]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
