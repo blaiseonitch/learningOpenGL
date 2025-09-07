@@ -40,7 +40,7 @@ int main(void) {
 		0.0f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f  // top
 	};
 
-	Shader firstShader("/shaders/vertex.glsl", "/shaders/fragment.glsl");
+	Shader firstShader("shaders/vertex.glsl", "shaders/fragment.glsl");
 
 	// VERTEX BUFFER, VERTEX ATTRIBUTE...
 	unsigned int vertexBufferObject, vertexArrayObject, elementBufferObject;
