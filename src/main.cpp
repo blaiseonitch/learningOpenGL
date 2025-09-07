@@ -1,5 +1,6 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include "shader.h"
 #include <iostream>
 #include <ostream>
 #include <cmath>
@@ -8,24 +9,6 @@
 const int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
 
 void processInput(GLFWwindow *window);
-
-// vertex shader code
-const char *vertexShaderSource = "#version 330 core\n"
-	"layout (location = 0) in vec3 aPos;\n"
-	"layout (location = 1) in vec3 aColor;\n"
-	"out vec3 ourColor;\n"
-	"void main() {\n"
-	"gl_Position = vec4(aPos, 1.0);\n"
-	"ourColor = aColor;\n"
-	"}\n";
-
-// fragment shader code
-const char *fragmentShaderSource = "#version 330 core\n"
-	"out vec4 FragColor;\n"
-	"in vec3 ourColor;\n"
-	"void main() {\n"
-	"FragColor = vec4(ourColor, 1.0f);\n"
-	"}\n";
 
 int main(void) {
 	glfwInit();
@@ -50,61 +33,14 @@ int main(void) {
 		return -1;
 	}
 
-	float firstTraingle[] = {
+	float triangle[] = {
 		// positios 					// colors
 		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
 		0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right
 		0.0f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f  // top
 	};
 
-	int success;
-	char infoLog[512];
-
-	// VERTEX SHADER
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER); // create vertex shader
-	glShaderSource(vertexShader, 1, &vertexShaderSource,
-								nullptr); // link shader code to the shader
-	glCompileShader(vertexShader);
-
-	// check if shader compilation failed
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
-		std::cout << "ERROR: VERTEX SHADER COMPILATION FAILED\n"
-			<< infoLog << std::endl;
-	}
-
-	// FRAGMENT SHADER [ORANGE]
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER); // create fragment shader
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource,
-								nullptr); // link fragment shader code to the shader.
-	glCompileShader(fragmentShader);
-
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
-		std::cout << "ERROR: ORANGE FRAGMENT SHADER COMPILATION FAILED\n"
-			<< infoLog << std::endl;
-	}
-
-	// Shader program
-	unsigned int shaderProgram = glCreateProgram(); // create shader program
-
-	// Attaching and linking shaderProgram
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
-		std::cout << "ERROR: LINKING SHADERS FAILED\n" << infoLog << std::endl;
-	}
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	Shader firstShader("/shaders/vertex.glsl", "/shaders/fragment.glsl");
 
 	// VERTEX BUFFER, VERTEX ATTRIBUTE...
 	unsigned int vertexBufferObject, vertexArrayObject, elementBufferObject;
@@ -117,7 +53,7 @@ int main(void) {
 	glBindBuffer(GL_ARRAY_BUFFER,
 							vertexBufferObject); // 'bind' the buffer to memory
 	glBufferData(
-		GL_ARRAY_BUFFER, sizeof(firstTraingle), firstTraingle,
+		GL_ARRAY_BUFFER, sizeof(triangle), triangle,
 		GL_STATIC_DRAW); // copy vertices data to the vertex buffer created
 
 	// how OpenGL should interprete our vertex (positions) attribute data
@@ -134,16 +70,16 @@ int main(void) {
 	// uncomment this call to draw in wireframe polygons.
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	glUseProgram(shaderProgram); // WE'RE CALLING THIS OUT OF THE GAME LOOP SINCE
 	// ITS JUST A SINGLE SHADER(PROGRAM) WE HAVE
 	while (!glfwWindowShouldClose(window)) {
 		// Input
 		processInput(window);
 
 		// rendering
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		firstShader.Use();
 		// first triangle
 		glBindVertexArray(vertexArrayObject);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -155,7 +91,6 @@ int main(void) {
 
 	glDeleteVertexArrays(1, &vertexArrayObject);
 	glDeleteBuffers(1, &vertexBufferObject);
-	glDeleteProgram(shaderProgram);
 
 	glfwTerminate();
 	return 0;
