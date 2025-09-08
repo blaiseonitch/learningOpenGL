@@ -5,6 +5,7 @@
 #include <ostream>
 #include <cmath>
 #include "imgui.h"
+#include "stb_image.h"
 
 const int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
 
@@ -40,7 +41,7 @@ int main(void) {
       0.0f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f  // top
   };
 
-  Shader firstShader("shaders/vertex.glsl", "shaders/fragment.glsl");
+  Shader firstShader("res/shaders/vertex.glsl", "res/shaders/fragment.glsl");
 
   float offset = 0.5f;
 
@@ -70,7 +71,7 @@ int main(void) {
   glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   // uncomment this call to draw in wireframe polygons.
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   // ITS JUST A SINGLE SHADER(PROGRAM) WE HAVE
   while (!glfwWindowShouldClose(window)) {
@@ -81,8 +82,8 @@ int main(void) {
     glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    firstShader.Use();
-    firstShader.SetFloat("xOffset", offset);
+    firstShader.Use(); // equevalent to glUseProgram(firstShader);
+    firstShader.SetFloat("xOffset", offset); // apply value to our uniform
 
     // first triangle
     glBindVertexArray(vertexArrayObject);
