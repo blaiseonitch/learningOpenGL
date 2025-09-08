@@ -20,4 +20,9 @@
     - [X] Basic GLSL syntax (Basically C... FAV PL btw)
     - [X] 'Communication' between shaders [in/out keywords] and between shaders and main program [uniform keyword]
     - [ ] Shader class
+    
+## Day 4 [07/09/25]
+- Finishing up SECTION 6 [SHADERS]
+    - [X] Done with notes [thank to @nikoloz02393 on discord] 
+    - [X] Done 2/3 of exercises
 
