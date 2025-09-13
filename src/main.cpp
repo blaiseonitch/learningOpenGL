@@ -9,8 +9,9 @@
 #include "stb_image.h"
 
 const int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
+float textureOpacity = 0.2f;
 
-void processInput(GLFWwindow *window);
+void ProcessInput(GLFWwindow *window);
 
 int main(void) {
   glfwInit();
@@ -86,10 +87,10 @@ int main(void) {
   glGenTextures(1, &texture1);
   glBindTexture(GL_TEXTURE_2D, texture1);
   // set texture parameters
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   stbi_set_flip_vertically_on_load(true);
   // load and generate texture
@@ -111,11 +112,10 @@ int main(void) {
   // set texture parameters
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  data =
-      stbi_load("res/textures/awesomeface.png", &width, &height, &nChannels, 0);
+  data = stbi_load("res/textures/cat.png", &width, &height, &nChannels, 0);
   if (data) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
                  GL_UNSIGNED_BYTE, data);
@@ -125,30 +125,34 @@ int main(void) {
   }
   stbi_image_free(data);
 
+  // setting shader uniforms
   firstShader.Use();
   firstShader.SetInt("texture1", 0);
   firstShader.SetInt("texture2", 1);
 
   glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-  // uncomment this call to draw in wireframe polygons.
-  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  // DRAW FACES OR wireframe
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // or GL_LINE for wireframe mode
 
   // main program loop
   while (!glfwWindowShouldClose(window)) {
     // Input
-    processInput(window);
+    ProcessInput(window);
+    // toggleTextureOpacity(window, textureOpacity);
 
     // rendering
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // textures
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture1);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture2);
 
     firstShader.Use(); // equevalent to glUseProgram(firstShader);
+    firstShader.SetFloat("opacity", textureOpacity);
     glBindVertexArray(vertexArrayObject);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -165,8 +169,22 @@ int main(void) {
   return 0;
 }
 
-void processInput(GLFWwindow *window) {
+void ProcessInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
   }
+
+  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+    std::cout << "Up button pressed" << std::endl;
+    textureOpacity += 0.01f;
+    if (textureOpacity >= 1.0f)
+      textureOpacity = 1.0f;
+  }
+  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    std::cout << "Down button pressed" << std::endl;
+    textureOpacity -= 0.01f;
+    if (textureOpacity <= 0.0f)
+      textureOpacity = 0.0f;
+  }
 }
+

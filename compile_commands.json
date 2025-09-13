@@ -1,7 +1,7 @@
 [
   {
     "arguments": [
-      "/usr/sbin/g++",
+      "/usr/bin/g++",
       "-c",
       "-std=c++17",
       "-Isrc/include",
@@ -11,13 +11,45 @@
       "build/mainx64li",
       "src/main.cpp"
     ],
-    "directory": "/home/blaze/_projects/Cpp/learnOpenGL",
-    "file": "/home/blaze/_projects/Cpp/learnOpenGL/src/main.cpp",
-    "output": "/home/blaze/_projects/Cpp/learnOpenGL/build/mainx64li"
+    "directory": "/home/blaze/_projects/Cpp/OpenGL",
+    "file": "/home/blaze/_projects/Cpp/OpenGL/src/main.cpp",
+    "output": "/home/blaze/_projects/Cpp/OpenGL/build/mainx64li"
   },
   {
     "arguments": [
-      "/usr/sbin/g++",
+      "/usr/bin/g++",
+      "-c",
+      "-std=c++17",
+      "-Isrc/include",
+      "-Iglad/include",
+      "-I/home/blaze/vcpkg/installed/x64-linux/include",
+      "-o",
+      "build/mainx64li",
+      "src/shader.cpp"
+    ],
+    "directory": "/home/blaze/_projects/Cpp/OpenGL",
+    "file": "/home/blaze/_projects/Cpp/OpenGL/src/shader.cpp",
+    "output": "/home/blaze/_projects/Cpp/OpenGL/build/mainx64li"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-std=c++17",
+      "-Isrc/include",
+      "-Iglad/include",
+      "-I/home/blaze/vcpkg/installed/x64-linux/include",
+      "-o",
+      "build/mainx64li",
+      "src/stb.cpp"
+    ],
+    "directory": "/home/blaze/_projects/Cpp/OpenGL",
+    "file": "/home/blaze/_projects/Cpp/OpenGL/src/stb.cpp",
+    "output": "/home/blaze/_projects/Cpp/OpenGL/build/mainx64li"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
       "-c",
       "-std=c++17",
       "-Isrc/include",
@@ -27,8 +59,8 @@
       "build/mainx64li",
       "glad/src/gl.c"
     ],
-    "directory": "/home/blaze/_projects/Cpp/learnOpenGL",
-    "file": "/home/blaze/_projects/Cpp/learnOpenGL/glad/src/gl.c",
-    "output": "/home/blaze/_projects/Cpp/learnOpenGL/build/mainx64li"
+    "directory": "/home/blaze/_projects/Cpp/OpenGL",
+    "file": "/home/blaze/_projects/Cpp/OpenGL/glad/src/gl.c",
+    "output": "/home/blaze/_projects/Cpp/OpenGL/build/mainx64li"
   }
 ]
