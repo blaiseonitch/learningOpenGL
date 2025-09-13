@@ -29,4 +29,8 @@
 ## Day 5 [2025-09-08]
 - Finished with shaders
 - Began SECTION 7 [TEXTURES]
-    - [ ] Done with notes.
+    - [X] Done with notes.
+
+## Day 6 [2025-09-13]
+- Finished with SECTION 7 [TEXTURES]
+- Finished and understood exercises
