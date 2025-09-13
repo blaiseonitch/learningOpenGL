@@ -91,6 +91,7 @@ int main(void) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+  stbi_set_flip_vertically_on_load(true);
   // load and generate texture
   int width, height, nChannels;
   unsigned char *data =
@@ -98,6 +99,7 @@ int main(void) {
   if (data) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
                  GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
   } else {
     std::cout << "Failed to load texture" << std::endl;
   }
@@ -112,53 +114,59 @@ int main(void) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	data = stbi_load("res/textures/container.jpg", &width, &height, &nChannels, 0);
-	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-							 GL_UNSIGNED_BYTE, data);
-	} else {
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
+  data =
+      stbi_load("res/textures/awesomeface.png", &width, &height, &nChannels, 0);
+  if (data) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+  } else {
+    std::cout << "Failed to load texture" << std::endl;
+  }
+  stbi_image_free(data);
 
-	firstShader.Use();
+  firstShader.Use();
+  firstShader.SetInt("texture1", 0);
+  firstShader.SetInt("texture2", 1);
 
+  glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+  // uncomment this call to draw in wireframe polygons.
+  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	// uncomment this call to draw in wireframe polygons.
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  // main program loop
+  while (!glfwWindowShouldClose(window)) {
+    // Input
+    processInput(window);
 
-	// main program loop
-	while (!glfwWindowShouldClose(window)) {
-		// Input
-		processInput(window);
+    // rendering
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
-		// rendering
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture2);
 
-		firstShader.Use(); // equevalent to glUseProgram(firstShader);
+    firstShader.Use(); // equevalent to glUseProgram(firstShader);
+    glBindVertexArray(vertexArrayObject);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glBindVertexArray(vertexArrayObject);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    // function calls and events
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+  }
 
-		// function calls and events
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
+  glDeleteVertexArrays(1, &vertexArrayObject);
+  glDeleteBuffers(1, &vertexBufferObject);
+  glDeleteBuffers(1, &elementBufferObject);
 
-	glDeleteVertexArrays(1, &vertexArrayObject);
-	glDeleteBuffers(1, &vertexBufferObject);
-	glDeleteBuffers(1, &elementBufferObject);
-
-	glfwTerminate();
-	return 0;
+  glfwTerminate();
+  return 0;
 }
 
 void processInput(GLFWwindow *window) {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, true);
-	}
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, true);
+  }
 }
