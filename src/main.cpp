@@ -1,10 +1,12 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include "glm/ext/matrix_transform.hpp"
 #include "shader.h"
 #include <iostream>
 #include <ostream>
-// #include <cmath>
-// #include "imgui.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -12,6 +14,7 @@ const int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
 float textureOpacity = 0.2f;
 
 void ProcessInput(GLFWwindow *window);
+void toggleTextureOpacity(GLFWwindow *window, float value);
 
 int main(void) {
   glfwInit();
@@ -21,7 +24,7 @@ int main(void) {
   glfwWindowHint(GLFW_RESIZABLE, 0);
 
   GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT,
-                                        "LearnOpenGL", nullptr, nullptr);
+                                        "LearnOpenGL_", nullptr, nullptr);
 
   if (!window) {
     std::cout << "Failed to create glfw window" << std::endl;
@@ -49,6 +52,11 @@ int main(void) {
   };
 
   Shader firstShader("res/shaders/vertex.glsl", "res/shaders/fragment.glsl");
+
+  // glm::mat4 trans = glm::mat4(1.0f);
+  // trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+  // trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+  //
 
   // VERTEX BUFFER, VERTEX ATTRIBUTE...
   unsigned int vertexBufferObject, vertexArrayObject, elementBufferObject;
@@ -153,7 +161,24 @@ int main(void) {
 
     firstShader.Use(); // equevalent to glUseProgram(firstShader);
     firstShader.SetFloat("opacity", textureOpacity);
+
+    glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+    trans =
+        glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+    unsigned int transformLoc =
+        glGetUniformLocation(firstShader.ID, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
     glBindVertexArray(vertexArrayObject);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    trans = glm::mat4(1.0f);
+    trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
+    float scaleAmount = static_cast<float>(sin(glfwGetTime()));
+		trans = glm::scale(trans, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     // function calls and events
@@ -187,4 +212,3 @@ void ProcessInput(GLFWwindow *window) {
       textureOpacity = 0.0f;
   }
 }
-
