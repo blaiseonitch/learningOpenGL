@@ -34,3 +34,7 @@
 ## Day 6 [2025-09-13]
 - Finished with SECTION 7 [TEXTURES]
 - Finished and understood exercises
+
+## Day 7 [2025-09-24]
+- Finished with SECTION 8 [TRANSFORMATION]
+- Finished and partially understood exercises
